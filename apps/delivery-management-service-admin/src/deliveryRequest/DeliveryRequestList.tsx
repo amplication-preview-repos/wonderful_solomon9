@@ -1,0 +1,38 @@
+import * as React from "react";
+import {
+  List,
+  Datagrid,
+  ListProps,
+  ReferenceField,
+  TextField,
+  DateField,
+} from "react-admin";
+import Pagination from "../Components/Pagination";
+import { COMPANY_TITLE_FIELD } from "../company/CompanyTitle";
+
+export const DeliveryRequestList = (props: ListProps): React.ReactElement => {
+  return (
+    <List
+      {...props}
+      bulkActionButtons={false}
+      title={"DeliveryRequests"}
+      perPage={50}
+      pagination={<Pagination />}
+    >
+      <Datagrid rowClick="show">
+        <ReferenceField label="Company" source="company.id" reference="Company">
+          <TextField source={COMPANY_TITLE_FIELD} />
+        </ReferenceField>
+        <DateField source="createdAt" label="Created At" />
+        <TextField label="deliveryStatus" source="deliveryStatus" />
+        <TextField label="destinationAddress" source="destinationAddress" />
+        <TextField label="ID" source="id" />
+        <TextField label="receiver" source="receiver" />
+        <TextField label="requestedOn" source="requestedOn" />
+        <TextField label="sender" source="sender" />
+        <TextField label="sourceAddress" source="sourceAddress" />
+        <DateField source="updatedAt" label="Updated At" />
+      </Datagrid>
+    </List>
+  );
+};
