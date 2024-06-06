@@ -1,0 +1,99 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model PackageModel {
+  contentDescription String?
+  createdAt          DateTime         @default(now())
+  deliveryRequest    DeliveryRequest? @relation(fields: [deliveryRequestId], references: [id])
+  deliveryRequestId  String?
+  dimensions         Json?
+  id                 String           @id @default(cuid())
+  updatedAt          DateTime         @updatedAt
+  weight             Float?
+}
+
+model DeliveryRequest {
+  company            Company?                           @relation(fields: [companyId], references: [id])
+  companyId          String?
+  createdAt          DateTime                           @default(now())
+  deliveryStatus     EnumDeliveryRequestDeliveryStatus?
+  destinationAddress String?
+  id                 String                             @id @default(cuid())
+  packages           PackageModel[]
+  receiver           String?
+  requestedOn        DateTime?
+  sender             String?
+  sourceAddress      String?
+  updatedAt          DateTime                           @updatedAt
+}
+
+model Route {
+  createdAt          DateTime @default(now())
+  destinationAddress String?
+  distance           Float?
+  estimatedTime      Float?
+  id                 String   @id @default(cuid())
+  rider              Rider?   @relation(fields: [riderId], references: [id])
+  riderId            String?
+  sourceAddress      String?
+  updatedAt          DateTime @updatedAt
+}
+
+model Address {
+  city       String?
+  companies  Company[]
+  country    String?
+  createdAt  DateTime  @default(now())
+  id         String    @id @default(cuid())
+  lat        Float?
+  long       Float?
+  postalCode String?
+  state      String?
+  street     String?
+  updatedAt  DateTime  @updatedAt
+}
+
+model Company {
+  address          Address?          @relation(fields: [addressId], references: [id])
+  addressId        String?
+  createdAt        DateTime          @default(now())
+  deliveryRequests DeliveryRequest[]
+  id               String            @id @default(cuid())
+  name             String?
+  riders           Rider[]
+  updatedAt        DateTime          @updatedAt
+}
+
+model Rider {
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+  createdAt DateTime @default(now())
+  email     String?
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  routes    Route[]
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumDeliveryRequestDeliveryStatus {
+  Option1
+}
